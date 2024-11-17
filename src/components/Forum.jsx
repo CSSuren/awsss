@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Forum = () => {
   const [posts, setPosts] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/posts', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      const response = await axios.get("http://localhost:5000/posts", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setPosts(response.data);
     } catch (error) {
-      console.error('Error fetching posts', error);
+      console.error("Error fetching posts", error);
     } finally {
       setLoading(false);
     }
@@ -24,15 +24,19 @@ const Forum = () => {
     e.preventDefault();
     if (!message) return;
     try {
-      const response = await axios.post('http://localhost:5000/post', { message }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/post",
+        { message },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       if (response.status === 201) {
-        setMessage('');
+        setMessage("");
         fetchPosts();
       }
     } catch (error) {
-      console.error('Error posting message', error);
+      console.error("Error posting message", error);
     }
   };
 
@@ -40,9 +44,79 @@ const Forum = () => {
     fetchPosts();
   }, []);
 
+  const styles = {
+    container: {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "400px",
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      padding: "32px 24px",
+      fontSize: "14px",
+      fontFamily: "Arial, sans-serif",
+      color: "white",
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
+      boxSizing: "border-box",
+      borderRadius: "16px",
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
+      backdropFilter: "blur(10px)",
+      textAlign: "center",
+    },
+    heading: {
+      fontSize: "1.5rem",
+      marginBottom: "20px",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
+    },
+    inputGroup: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "8px",
+    },
+    input: {
+      padding: "12px 16px",
+      borderRadius: "8px",
+      color: "#fff",
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      resize: "none",
+      height: "80px",
+    },
+    button: {
+      alignSelf: "center",
+      fontFamily: "inherit",
+      color: "#fff",
+      background: "linear-gradient(90deg, #e81cff, #40c9ff)",
+      border: "none",
+      padding: "12px 16px",
+      fontSize: "inherit",
+      cursor: "pointer",
+      borderRadius: "8px",
+      width: "100%",
+      transition: "all 0.3s ease",
+    },
+    postsContainer: {
+      marginTop: "20px",
+    },
+    post: {
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      padding: "12px 16px",
+      borderRadius: "8px",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      color: "white",
+    },
+  };
+
   return (
     <div style={styles.container}>
-      <h1>Forum</h1>
+      <h1 style={styles.heading}>Forum</h1>
       <form onSubmit={handlePostSubmit} style={styles.form}>
         <div style={styles.inputGroup}>
           <textarea
@@ -52,8 +126,18 @@ const Forum = () => {
             style={styles.input}
           />
         </div>
-        <button type="submit" style={styles.button} disabled={loading}>
-          {loading ? 'Posting...' : 'Post'}
+        <button
+          type="submit"
+          style={styles.button}
+          disabled={loading}
+          onMouseOver={(e) =>
+            (e.target.style.background = "linear-gradient(90deg, #40c9ff, #e81cff)")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.background = "linear-gradient(90deg, #e81cff, #40c9ff)")
+          }
+        >
+          {loading ? "Posting..." : "Post"}
         </button>
       </form>
       <div style={styles.postsContainer}>
@@ -68,62 +152,5 @@ const Forum = () => {
     </div>
   );
 };
-
-const styles = {
-    container: {
-      width: '300px',
-      margin: '0 auto',
-      padding: '20px',
-      border: '1px solid #ccc',
-      borderRadius: '5px',
-      textAlign: 'center',
-    },
-    form: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    inputGroup: {
-      marginBottom: '10px',
-    },
-    input: {
-      padding: '10px',
-      fontSize: '14px',
-      borderRadius: '4px',
-      border: '1px solid #ccc',
-      width: '100%',
-    },
-    button: {
-      padding: '10px',
-      backgroundColor: '#4CAF50',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      marginTop: '10px',
-    },
-    message: {
-      color: 'green',
-      marginTop: '10px',
-    },
-    toggleButton: {
-      marginTop: '10px',
-      backgroundColor: '#f44336',
-      color: 'white',
-      border: 'none',
-      padding: '10px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-    },
-    postsContainer: {
-      marginTop: '20px',
-    },
-    post: {
-      backgroundColor: 'black',
-      padding: '10px',
-      borderRadius: '5px',
-      marginBottom: '10px',
-      textAlign: 'left',
-    },
-  };
 
 export default Forum;
